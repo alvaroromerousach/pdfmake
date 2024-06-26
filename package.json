@@ -1,0 +1,18 @@
+{
+  "name": "pdf2",
+  "version": "1.0.0",
+  "description": "Hacer PDF",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "Alvaro # Romero",
+  "license": "ISC",
+  "dependencies": {
+    "@types/pdfkit": "^0.13.4",
+    "@types/pdfmake": "^0.2.9",
+    "pdfkit": "^0.15.0",
+    "pdfmake": "^0.2.10"
+  }
+}
