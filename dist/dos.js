@@ -39,6 +39,9 @@ const doc = new pdfkit_1.default({
     },
 });
 doc.pipe(fs.createWriteStream("mi-documento.pdf"));
+doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
+doc.registerFont("Open-Sans-Condensed", "src/fonts/OpenSans_Condensed-Medium.ttf");
+doc.registerFont("Open-Sans", "src/fonts/OpenSans-Regular.ttf");
 // Dibujar el marco gris de 1 px alrededor del documento
 const margin = 28.35; // 1 cm en puntos
 const pageWidth = doc.page.width;
@@ -64,11 +67,11 @@ const logoPath = "src/logo-usach.png"; // Ruta a tu logo
 doc.image(logoPath, margin, margin, {
     fit: [col1Width - 2 * columnMargin, 50], // Ajustar el tamaño del logo
 });
-doc.save();
 // Columna 2: col-4 (4/12 del ancho)
-const col2Width = colWidth * 5;
+const col2Width = colWidth * 4;
 const textLines = "UNIVERSIDAD DE SANTIAGO DE CHILE\nREGISTRO ACADÉMICO\nTÍTULOS Y GRADOS";
 doc
+    .font("Open-Sans-Condensed")
     .fontSize(10)
     /*  .scale(0.8, 1)*/
     .text(textLines, margin + col1Width + columnMargin, margin + columnMargin, {
@@ -77,43 +80,95 @@ doc
 });
 // Columna 3: col-6 (6/12 del ancho)
 const col3Width = colWidth * 5;
-doc.restore();
+//doc.restore();
 const loremIpsum = "ROL\nAPROBAD\nRESOLUCION\nDEL";
 doc
+    .font("Open-Sans")
     .fontSize(10)
-    .text(loremIpsum, margin + col1Width + col2Width + colWidth + columnMargin, margin + columnMargin, {
+    .text(loremIpsum, margin + col1Width + col2Width + colWidth * 2 + columnMargin, margin + columnMargin, {
     width: col3Width - 2 * columnMargin,
     align: "justify",
 });
+//doc.save();
 //doc.moveDown(1);
-// Centrar el título respecto al ancho total del documento
-doc.moveDown(2); // Añadir espacio entre filas
+// Seccion Dos: Titulo
+doc.moveDown(1); // Añadir espacio entre filas
 const title = "EXPEDIENTE DE MINOR";
 const titleWidth = doc.widthOfString(title);
 const titleX = (pageWidth - titleWidth) / 2;
-doc.fontSize(20).text(title, margin, doc.y, {
-    paragraphGap: 20,
+doc.font("Open-Sans-Bold").fontSize(18).text(title, margin, doc.y, {
+    paragraphGap: 10,
     align: "center",
 });
-// Tercera fila: Cuadro
+// Seccion Dos: Cuadro
 const boxHeight = 113.39; // 4 cm en puntos
-const halfPageWidth = pageWidth / 2;
 doc
-    .rect(halfPageWidth + margin, doc.y, halfPageWidth - margin * 2, boxHeight).strokeColor("black")
+    .rect(margin + colWidth * 7, doc.y, colWidth * 5, boxHeight)
+    .strokeColor("black")
+    .stroke();
+const box1Start = doc.y + boxHeight;
+doc
+    .font("Open-Sans-Bold")
+    .fontSize(13)
+    .text("APELLIDO1 APELLIDO2, NOMBRES", margin, doc.y + boxHeight + margin, {
+    paragraphGap: 0,
+    align: "center",
+});
+// linea bajo el nombre
+doc
+    .moveTo(margin, doc.y)
+    .lineTo(pageWidth - margin * 2, doc.y)
     .stroke();
 doc
-    .fontSize(20)
-    .text("1 Expe diente de Minor 2 ", margin, doc.y + boxHeight, {
+    .font("Open-Sans")
+    .fontSize(11)
+    .text("Apellidos y Nombres Completos", margin, doc.y, {
+    paragraphGap: 5,
     align: "center",
-    paragraphGap: 20,
 });
-/*
-// guia de color rojo
 doc
- .lineWidth(1)
- .rect( margin + col1Width + columnMargin, margin + columnMargin, 2, 2)
- .strokeColor("red")
- .stroke();
+    .font("Open-Sans")
+    .fontSize(13)
+    .text("Dirección de la casa, número y villa", margin, doc.y, {
+    paragraphGap: 0,
+    align: "center",
+});
+// linea bajo dirección
+doc
+    .moveTo(margin, doc.y)
+    .lineTo(pageWidth - margin * 2, doc.y)
+    .stroke();
+doc
+    .font("Open-Sans")
+    .fontSize(11)
+    .text("Domicilio", margin, doc.y, {
+    paragraphGap: 5,
+    align: "center",
+});
+doc
+    .font("Open-Sans")
+    .fontSize(13)
+    .text("CÉDULA:", margin, doc.y, { paragraphGap: 5 });
+doc.fontSize(13).text("TELÉFONO:", margin, doc.y, { paragraphGap: 5 });
+doc.fontSize(13).text("E-MAIL:", margin, doc.y, { paragraphGap: 5 });
+doc.fontSize(13).text("SOLICITA:", margin, doc.y, { paragraphGap: 5 });
+doc.fontSize(13).text("ESPECIALIDAD:", margin, doc.y, { paragraphGap: 5 });
+doc
+    .fontSize(13)
+    .text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA:", margin, doc.y, {
+    paragraphGap: 5,
+});
+doc
+    .rect(margin, box1Start + margin / 2, colWidth * 12, doc.y - box1Start)
+    .strokeColor("black")
+    .stroke();
+/*
+ // guia de color rojo
+ doc
+  .lineWidth(1)
+  .rect( margin + col1Width + columnMargin, margin + columnMargin, 2, 2)
+  .strokeColor("red")
+  .stroke();
 */
 console.log("pageWidth:" + pageWidth);
 console.log("pageHeight:" + pageHeight);
