@@ -38,7 +38,7 @@ const doc = new pdfkit_1.default({
         right: 28.35,
     },
 });
-doc.pipe(fs.createWriteStream("mi-documento.pdf"));
+doc.pipe(fs.createWriteStream("expediente.pdf"));
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont("Open-Sans-Condensed", "src/fonts/OpenSans_Condensed-Medium.ttf");
 doc.registerFont("Open-Sans", "src/fonts/OpenSans-Regular.ttf");
@@ -69,16 +69,21 @@ doc.image(logoPath, margin, margin, {
 });
 // Columna 2: col-4 (4/12 del ancho)
 const col2Width = colWidth * 4;
-const textLines = "UNIVERSIDAD DE SANTIAGO DE CHILE\nREGISTRO ACADÉMICO\nTÍTULOS Y GRADOS";
+/*const textLines =
+  "UNIVERSIDAD DE SANTIAGO DE CHILE\nREGISTRO ACADÉMICO\nTÍTULOS Y GRADOS";
 doc
-    .font("Open-Sans-Condensed")
-    .fontSize(10)
-    /*  .scale(0.8, 1)*/
-    .text(textLines, margin + col1Width, margin, {
+  .font("Open-Sans-Condensed")
+  .fontSize(10)
+  .text(textLines, margin + col1Width, margin, {
     width: col2Width,
     align: "center",
+  });*/
+let texts = ["UNIVERSIDAD DE SANTIAGO DE CHILE", "REGISTRO ACADÉMICO", "TÍTULOS Y GRADOS"];
+doc.font("Open-Sans-Condensed").fontSize(10);
+texts.forEach((text) => {
+    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center", width: colWidth * 3 });
 });
-let texts = ["ROL USACH N°  ", "APROBADO  ", "RESOLUCIÓN N°  ", "DEL  "];
+texts = ["ROL USACH N°  ", "APROBADO  ", "RESOLUCIÓN N°  ", "DEL  "];
 doc.font("Open-Sans").fontSize(11);
 doc.y = margin;
 texts.forEach((text) => {

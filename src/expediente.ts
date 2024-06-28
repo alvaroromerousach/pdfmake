@@ -1,5 +1,6 @@
 import PDFDocument from "pdfkit";
 import * as fs from "fs";
+import { width } from "pdfkit/js/page";
 
 // Crear el documento PDF
 const doc = new PDFDocument({
@@ -12,7 +13,7 @@ const doc = new PDFDocument({
   },
 });
 
-doc.pipe(fs.createWriteStream("mi-documento.pdf"));
+doc.pipe(fs.createWriteStream("expediente.pdf"));
 
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont(
@@ -52,19 +53,30 @@ doc.image(logoPath, margin, margin, {
 });
 
 // Columna 2: col-4 (4/12 del ancho)
+
 const col2Width = colWidth * 4;
-const textLines =
+/*const textLines =
   "UNIVERSIDAD DE SANTIAGO DE CHILE\nREGISTRO ACADÉMICO\nTÍTULOS Y GRADOS";
 doc
   .font("Open-Sans-Condensed")
   .fontSize(10)
-  /*  .scale(0.8, 1)*/
   .text(textLines, margin + col1Width, margin, {
     width: col2Width,
     align: "center",
+  });*/
+
+  let texts = ["UNIVERSIDAD DE SANTIAGO DE CHILE","REGISTRO ACADÉMICO","TÍTULOS Y GRADOS"];
+  doc.font("Open-Sans-Condensed").fontSize(10);
+  
+  texts.forEach((text) => {
+  
+    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center",width:colWidth*3 });
+
   });
 
-const texts = ["ROL ", "APROBADO ", "RESOLUCIÓN ", "DEL "];
+
+
+texts = ["ROL USACH N°  ", "APROBADO  ", "RESOLUCIÓN N°  ", "DEL  "];
 doc.font("Open-Sans").fontSize(11);
 doc.y = margin;
 
@@ -147,7 +159,7 @@ doc.font("Open-Sans").fontSize(11).text("Domicilio", margin, doc.y, {
 doc
   .font("Open-Sans")
   .fontSize(13)
-  .text("CÉDULA:", margin * 1.5, doc.y, { paragraphGap: 5 });
+  .text("CÉDULA DE IDENTIDAD:", margin * 1.5, doc.y, { paragraphGap: 5 });
 doc.fontSize(13).text("TELÉFONO:", { paragraphGap: 5 });
 doc.fontSize(13).text("E-MAIL:", margin * 1.5, doc.y, { paragraphGap: 5 });
 doc.fontSize(13).text("SOLICITA:", margin * 1.5, doc.y, { paragraphGap: 5 });
@@ -157,13 +169,63 @@ doc
 doc
   .fontSize(13)
   .text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA:", margin * 1.5, doc.y, {
-    paragraphGap: 5,
+    paragraphGap: 0,
   });
 
 doc
   .rect(margin, box1Start + margin / 2, colWidth * 12, doc.y - box1Start)
   .strokeColor("black")
   .stroke();
+
+  doc
+  .font("Open-Sans")
+  .fontSize(13)
+  .text("USO EXCLUSIVO DE TÍTULOS Y GRADOS", margin, doc.y + margin/2, {
+    paragraphGap: 0,
+    align: "center",
+  });
+
+/////
+///// Segunda Tabla 
+/////
+
+  const box2Start = doc.y ;
+
+  texts = ["Solicitud  ", "Certificado  ", "Diplomad  ", "TOTAL  "];
+  doc.font("Open-Sans").fontSize(11);
+  
+  texts.forEach((text) => {  
+    doc.text(text, margin *1.5 , doc.y, { paragraphGap: 5, lineGap: 0 });
+  
+    doc
+      .moveTo(margin + colWidth * 2, doc.y - 5)
+      .lineTo(margin + colWidth*5, doc.y - 5)
+      .strokeColor("black")
+      .stroke();
+  });
+
+  doc.y = box2Start;
+
+  texts = ["V°B° Legal", "V°B° Administrativo", "Ficha (Ingreso)", "A V B° Académico", "Enrolamiento", "Certificación","Ficha (Registro)","Calígrafo","Envío o Firmas", "Ficha (Kardex)"];
+  doc.font("Open-Sans").fontSize(11);
+  
+  texts.forEach((text) => {
+  
+    doc.text(text, margin + colWidth*6 , doc.y, { paragraphGap: 5, lineGap: 0 });
+  
+    const boxHeight = 113.39; // 4 cm en puntos
+    doc
+      .rect(colWidth * 9 , doc.y - margin/2, margin /2 , margin / 2)
+      .strokeColor("black")
+      .stroke();
+
+    doc
+      .moveTo(margin + colWidth * 9, doc.y - 5)
+      .lineTo(margin + colWidth * 12 - margin/2, doc.y - 5)
+      .strokeColor("black")
+      .stroke();
+  });
+
 
 /*
  // guia de color rojo
