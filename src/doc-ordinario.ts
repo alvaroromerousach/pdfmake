@@ -15,7 +15,7 @@ const doc = new PDFDocument({
   },
 });
 
-doc.pipe(fs.createWriteStream("ordinario.pdf"));
+doc.pipe(fs.createWriteStream("doc-ordinario.pdf"));
 
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont(
@@ -72,7 +72,7 @@ texts.forEach((text) => {
     paragraphGap: 0,
     lineGap: 0,
     align: "center",
-    width: colWidth * 5,
+    width: colWidth * 4,
   });
 });
 

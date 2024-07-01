@@ -13,7 +13,7 @@ const doc = new PDFDocument({
   },
 });
 
-doc.pipe(fs.createWriteStream("expediente.pdf"));
+doc.pipe(fs.createWriteStream("doc-expediente.pdf"));
 
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont(
@@ -55,26 +55,21 @@ doc.image(logoPath, margin, margin, {
 // Columna 2: col-4 (4/12 del ancho)
 
 const col2Width = colWidth * 4;
-/*const textLines =
-  "UNIVERSIDAD DE SANTIAGO DE CHILE\nREGISTRO ACADÉMICO\nTÍTULOS Y GRADOS";
-doc
-  .font("Open-Sans-Condensed")
-  .fontSize(10)
-  .text(textLines, margin + col1Width, margin, {
-    width: col2Width,
+let texts = [
+  "UNIVERSIDAD DE SANTIAGO DE CHILE",
+  "REGISTRO ACADÉMICO",
+  "TÍTULOS Y GRADOS",
+];
+doc.font("Open-Sans-Condensed").fontSize(10);
+
+texts.forEach((text) => {
+  doc.text(text, margin + colWidth, doc.y, {
+    paragraphGap: 0,
+    lineGap: 0,
     align: "center",
-  });*/
-
-  let texts = ["UNIVERSIDAD DE SANTIAGO DE CHILE","REGISTRO ACADÉMICO","TÍTULOS Y GRADOS"];
-  doc.font("Open-Sans-Condensed").fontSize(10);
-  
-  texts.forEach((text) => {
-  
-    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center",width:colWidth*3 });
-
+    width: colWidth * 3,
   });
-
-
+});
 
 texts = ["ROL USACH N°  ", "APROBADO  ", "RESOLUCIÓN N°  ", "DEL  "];
 doc.font("Open-Sans").fontSize(11);
@@ -93,21 +88,18 @@ texts.forEach((text) => {
     .stroke();
 });
 
-//doc.save();
-//doc.moveDown(1);
-
 // Seccion Dos: Titulo
 doc.moveDown(1); // Añadir espacio entre filas
 const title = "EXPEDIENTE DE MINOR";
 const titleWidth = doc.widthOfString(title);
 const titleX = (pageWidth - titleWidth) / 2;
-doc.font("Open-Sans-Bold").fontSize(18).text(title, margin, doc.y, {
+doc.font("Open-Sans-Bold").fontSize(15).text(title, margin, doc.y, {
   paragraphGap: 10,
   align: "center",
 });
 
 // Seccion Dos: Cuadro
-const boxHeight = 113.39; // 4 cm en puntos
+const boxHeight = 90; // 4 cm en puntos
 doc
   .rect(margin + colWidth * 7, doc.y, colWidth * 5, boxHeight)
   .strokeColor("black")
@@ -117,7 +109,7 @@ const box1Start = doc.y + boxHeight;
 
 doc
   .font("Open-Sans-Bold")
-  .fontSize(13)
+  .fontSize(11)
   .text("APELLIDO1 APELLIDO2, NOMBRES", margin, doc.y + boxHeight + margin, {
     paragraphGap: 0,
     align: "center",
@@ -131,7 +123,7 @@ doc
 
 doc
   .font("Open-Sans")
-  .fontSize(11)
+  .fontSize(9)
   .text("Apellidos y Nombres Completos", margin, doc.y, {
     paragraphGap: 5,
     align: "center",
@@ -139,7 +131,7 @@ doc
 
 doc
   .font("Open-Sans")
-  .fontSize(13)
+  .fontSize(11)
   .text("Dirección de la casa, número y villa", margin, doc.y, {
     paragraphGap: 0,
     align: "center",
@@ -151,81 +143,120 @@ doc
   .lineTo(pageWidth - margin * 1.5, doc.y)
   .stroke();
 
-doc.font("Open-Sans").fontSize(11).text("Domicilio", margin, doc.y, {
+doc.font("Open-Sans").fontSize(9).text("Domicilio", margin, doc.y, {
   paragraphGap: 5,
   align: "center",
 });
 
 doc
   .font("Open-Sans")
-  .fontSize(13)
+  .fontSize(11)
   .text("CÉDULA DE IDENTIDAD:", margin * 1.5, doc.y, { paragraphGap: 5 });
-doc.fontSize(13).text("TELÉFONO:", { paragraphGap: 5 });
-doc.fontSize(13).text("E-MAIL:", margin * 1.5, doc.y, { paragraphGap: 5 });
-doc.fontSize(13).text("SOLICITA:", margin * 1.5, doc.y, { paragraphGap: 5 });
-doc
-  .fontSize(13)
-  .text("ESPECIALIDAD:", margin * 1.5, doc.y, { paragraphGap: 5 });
-doc
-  .fontSize(13)
-  .text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA:", margin * 1.5, doc.y, {
-    paragraphGap: 0,
-  });
+doc.text("TELÉFONO:", { paragraphGap: 5 });
+doc.text("E-MAIL:", margin * 1.5, doc.y, { paragraphGap: 5 });
+doc.text("SOLICITA:", margin * 1.5, doc.y, { paragraphGap: 5 });
+doc.text("ESPECIALIDAD:", margin * 1.5, doc.y, { paragraphGap: 5 });
+doc.text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA:", margin * 1.5, doc.y, {
+  paragraphGap: 0,
+});
 
 doc
   .rect(margin, box1Start + margin / 2, colWidth * 12, doc.y - box1Start)
   .strokeColor("black")
   .stroke();
 
-  doc
-  .font("Open-Sans")
-  .fontSize(13)
-  .text("USO EXCLUSIVO DE TÍTULOS Y GRADOS", margin, doc.y + margin/2, {
+doc
+  .font("Open-Sans-Bold")
+  .fontSize(10)
+  .text("USO EXCLUSIVO DE TÍTULOS Y GRADOS", margin, doc.y + margin / 2, {
     paragraphGap: 0,
     align: "center",
   });
 
 /////
-///// Segunda Tabla 
+///// Segunda Tabla
 /////
 
-  const box2Start = doc.y ;
 
-  texts = ["Solicitud  ", "Certificado  ", "Diplomad  ", "TOTAL  "];
-  doc.font("Open-Sans").fontSize(11);
-  
-  texts.forEach((text) => {  
-    doc.text(text, margin *1.5 , doc.y, { paragraphGap: 5, lineGap: 0 });
-  
-    doc
-      .moveTo(margin + colWidth * 2, doc.y - 5)
-      .lineTo(margin + colWidth*5, doc.y - 5)
-      .strokeColor("black")
-      .stroke();
-  });
+const box2Start = doc.y;
 
-  doc.y = box2Start;
+doc.moveDown(1);
+doc.font("Open-Sans-Bold").text("ARANCELES E IMPUESTOS", margin * 1.5);
 
-  texts = ["V°B° Legal", "V°B° Administrativo", "Ficha (Ingreso)", "A V B° Académico", "Enrolamiento", "Certificación","Ficha (Registro)","Calígrafo","Envío o Firmas", "Ficha (Kardex)"];
-  doc.font("Open-Sans").fontSize(11);
-  
-  texts.forEach((text) => {
-  
-    doc.text(text, margin + colWidth*6 , doc.y, { paragraphGap: 5, lineGap: 0 });
-  
-    const boxHeight = 113.39; // 4 cm en puntos
-    doc
-      .rect(colWidth * 9 , doc.y - margin/2, margin /2 , margin / 2)
-      .strokeColor("black")
-      .stroke();
+doc.font("Open-Sans");
+texts = ["Solicitud", "Certificado", "Diploma", "TOTAL"];
+doc.font("Open-Sans").fontSize(11);
 
-    doc
-      .moveTo(margin + colWidth * 9, doc.y - 5)
-      .lineTo(margin + colWidth * 12 - margin/2, doc.y - 5)
-      .strokeColor("black")
-      .stroke();
-  });
+texts.forEach((text) => {
+  doc.text(text, margin * 1.5, doc.y, { paragraphGap: 5, lineGap: 0 });
 
+  doc
+    .moveTo(margin + colWidth * 2, doc.y - 5)
+    .lineTo(margin + colWidth * 5, doc.y - 5)
+    .strokeColor("black")
+    .stroke();
+});
+
+
+
+doc.moveDown(1);
+doc.font("Open-Sans-Bold").text("OBSERVACIONES", margin * 1.5);
+
+doc.y = box2Start;
+
+doc.moveDown(1);
+doc.font("Open-Sans-Bold").text("REGISTROS",margin+ colWidth * 8);
+
+texts = [
+  "V°B° Legal",
+  "V°B° Administrativo",
+  "Ficha (Ingreso)",
+  "A V B° Académico",
+  "Enrolamiento",
+  "Certificación",
+  "Ficha (Registro)",
+  "Calígrafo",
+  "Envío o Firmas",
+  "Ficha (Kardex)",
+];
+doc.font("Open-Sans").fontSize(11);
+
+texts.forEach((text) => {
+  doc.text(text, margin + colWidth * 6, doc.y, { paragraphGap: 5, lineGap: 0 });
+
+  const boxHeight = 113.39; // 4 cm en puntos
+  doc
+    .rect(colWidth * 9, doc.y - margin / 2, margin / 2, margin / 2)
+    .strokeColor("black")
+    .stroke();
+
+  doc
+    .moveTo(margin + colWidth * 9, doc.y - 5)
+    .lineTo(margin + colWidth * 12 - margin / 2, doc.y - 5)
+    .strokeColor("black")
+    .stroke();
+});
+
+
+doc.moveDown(2);
+
+doc.text("CAROLINA NAVARRET PALMA", margin * 1.5, doc.y, {
+  paragraphGap: 0,
+  lineGap: 0,
+  align: "center",
+  width: colWidth * 5,
+});
+doc
+    .moveTo(margin *1.5, doc.y)
+    .lineTo(margin + colWidth * 5 - margin / 2 , doc.y)
+    .strokeColor("black")
+    .stroke();
+doc.text("JEFA DE UNIDAD DE TÍTULOS Y GRADOS", margin * 1.5, doc.y, {
+  paragraphGap: 0,
+  lineGap: 0,
+  align: "center",
+  width: colWidth * 5,
+});
 
 /*
  // guia de color rojo
@@ -235,6 +266,12 @@ doc
   .strokeColor("red")
   .stroke();
 */
+
+
+doc
+  .rect(margin, box2Start , colWidth * 12, doc.y - box2Start)
+  .strokeColor("black")
+  .stroke();
 
 console.log("pageWidth:" + pageWidth);
 console.log("pageHeight:" + pageHeight);

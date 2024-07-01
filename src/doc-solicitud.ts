@@ -1,6 +1,6 @@
 import PDFDocument from "pdfkit";
 import * as fs from "fs";
-import { width } from "pdfkit/js/page";
+import { Fechas } from "./Fechas";
 
 // Crear el documento PDF
 const doc = new PDFDocument({
@@ -61,7 +61,7 @@ const col2Width = colWidth * 4;
   
   texts.forEach((text) => {
   
-    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center",width:colWidth*3 });
+    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center",width:colWidth*4 });
 
   });
 
@@ -86,77 +86,64 @@ texts.forEach((text) => {
 //doc.save();
 //doc.moveDown(1);
 
-// Seccion Dos: Titulo
-doc.moveDown(1); // Añadir espacio entre filas
-const title = "Santiago, xx de xxxxx de xxxx";
-const titleWidth = doc.widthOfString(title);
-const titleX = (pageWidth - titleWidth) / 2;
-doc.text(title, margin, doc.y, {
-  paragraphGap: 10,
-});
+const fecha = Fechas.obtenerFechaActualEnEspanol("DD de MMMM de YYYY");
+doc.moveDown(1);
+doc.font("Open-Sans-Bold");
+doc.text("Santiago, " + fecha, margin, doc.y);
+doc.moveDown(1);
 
 doc.moveDown(1);
-let posy= doc.y; 
+let posY= doc.y; 
+doc.text("De:", margin, posY);
+doc.text("DECANO FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA", colWidth+margin, posY );
+doc.moveDown(1);
 
-doc.text("De:", margin, posy);
-doc.text("REGISTRADOR CURRICULAR", colWidth+margin, posy );
-doc.text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA", colWidth+margin, doc.y );
+posY = doc.y;
+doc.text("A:", margin, posY);
+doc.text("RECTOR UNIVERSIDAD DE SANTIAGO DE CHILE", colWidth + margin, posY);
+doc.moveDown(2);
 
+doc.font("Open-Sans-Bold").text("SR. RECTOR:",margin);
+doc.moveDown(2);
+doc.font("Open-Sans");
+doc.text(
+    "Me permito solicitar a Ud., se conceda el título de xxxxxx a ",
+    margin
+  );
+doc.moveDown(1);
+doc.text(
+    "El (la) interesado(a), ha cumplido satisfacoriamente con las exigencias fijadas en el Plan de Estudio, Resolución(es) N° xxxx xxxx xxxxx",
+    margin
+  );
+doc.moveDown(1);
+doc.text(
+    "Los antecedentes han sido debidamente verificados por el suscrito, quien se responsabiliza de la corrección de la documentación que se acompaña.",
+    margin
+  );
+doc.moveDown(1);
+doc.text(
+    "De acuerdo a los antecedentes, completó sus requesitos para obtener el xxxxxxx con fecha de xx x  x x x x x x",
+    margin
+  );
+doc.moveDown(3);
+doc.font("Open-Sans");
+doc.text("Saluda atentamente a Ud.,", margin, doc.y);
 
-doc.text("A:", margin, doc.y  ,{ continued: true });
-doc.text("JEFA DE UNIDAD DE TITULOS Y GRADOS", colWidth+margin );
-doc.text("UNIVERSIDAD DE SANTIAGO DE CHILE", colWidth+margin );
+doc.moveDown(5);
 
-
-//doc.text("A:", margin, doc.y  ,{ continued: true });
-
-// Seccion Dos: Cuadro
-const boxHeight = 113.39; // 4 cm en puntos
+let text = "RAÚL BERRIOS ESPINOZA";
+let textWidth = doc.widthOfString(text);
+doc.text(text, margin + colWidth * 8, doc.y, {
+  width: colWidth * 4,
+  align: "center",
+});
 doc
-  .rect(margin + colWidth * 7, doc.y, colWidth * 5, boxHeight)
+  .moveTo(margin + colWidth * 8 + (colWidth * 4 - textWidth) / 2, doc.y)
+  .lineTo(pageWidth - margin - (colWidth * 4 - textWidth) / 2, doc.y)
   .strokeColor("black")
   .stroke();
-
-const box1Start = doc.y + boxHeight;
-
-doc
-  .font("Open-Sans-Bold")
-  .fontSize(13)
-  .text("APELLIDO1 APELLIDO2, NOMBRES", margin, doc.y + boxHeight + margin, {
-    paragraphGap: 0,
-    align: "center",
-  });
-
-// linea bajo el nombre
-doc
-  .moveTo(margin * 1.5, doc.y)
-  .lineTo(pageWidth - margin * 1.5, doc.y)
-  .stroke();
-
-doc
-  .font("Open-Sans")
-  .fontSize(11)
-  .text("Apellidos y Nombres Completos", margin, doc.y, {
-    paragraphGap: 5,
-    align: "center",
-  });
-
-doc
-  .font("Open-Sans")
-  .fontSize(13)
-  .text("Dirección de la casa, número y villa", margin, doc.y, {
-    paragraphGap: 0,
-    align: "center",
-  });
-
-// linea bajo dirección
-doc
-  .moveTo(margin * 1.5, doc.y)
-  .lineTo(pageWidth - margin * 1.5, doc.y)
-  .stroke();
-
-doc.font("Open-Sans").fontSize(11).text("Domicilio", margin, doc.y, {
-  paragraphGap: 5,
+doc.fontSize(10).text("DECANO", margin + colWidth * 8, doc.y, {
+  width: colWidth * 4,
   align: "center",
 });
 
