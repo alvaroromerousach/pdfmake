@@ -28,6 +28,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const pdfkit_1 = __importDefault(require("pdfkit"));
 const fs = __importStar(require("fs"));
+const Fechas_1 = require("./Fechas");
+//import { width } from "pdfkit/js/page";
 // Crear el documento PDF
 const doc = new pdfkit_1.default({
     size: "LETTER",
@@ -42,6 +44,8 @@ doc.pipe(fs.createWriteStream("ordinario.pdf"));
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont("Open-Sans-Condensed", "src/fonts/OpenSans_Condensed-Medium.ttf");
 doc.registerFont("Open-Sans", "src/fonts/OpenSans-Regular.ttf");
+let text;
+let textWidth;
 // Dibujar el marco gris de 1 px alrededor del documento
 const margin = 28.35; // 1 cm en puntos
 const pageWidth = doc.page.width;
@@ -61,89 +65,102 @@ for (let i = 0; i <= 12; i++) {
         .strokeColor("#dddddd")
         .stroke();
 }
-// Columna 1: col-2 (2/12 del ancho)
-const col1Width = colWidth * 1;
+// Logo USACH
+//const col1Width = colWidth * 1;
 const logoPath = "src/logo-usach.png"; // Ruta a tu logo
 doc.image(logoPath, margin, margin, {
-    fit: [col1Width, 50], // Ajustar el tamaño del logo
+    fit: [colWidth, colWidth], // Ajustar el tamaño del logo
 });
 // Columna 2: col-4 (4/12 del ancho)
-const col2Width = colWidth * 4;
-let texts = ["UNIVERSIDAD DE SANTIAGO DE CHILE", "REGISTRO ACADÉMICO", "TÍTULOS Y GRADOS"];
+//const col2Width = colWidth * 4;
+let texts = [
+    "REPUBLICA DE CHILE",
+    "UNIVERSIDAD DE SANTIAGO DE CHILE",
+    "FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA",
+    "REGISTRO CURRICULAR",
+];
 doc.font("Open-Sans-Condensed").fontSize(10);
 texts.forEach((text) => {
-    doc.text(text, margin + colWidth, doc.y, { paragraphGap: 0, lineGap: 0, align: "center", width: colWidth * 3 });
+    doc.text(text, margin + colWidth, doc.y, {
+        paragraphGap: 0,
+        lineGap: 0,
+        align: "center",
+        width: colWidth * 5,
+    });
 });
 texts = ["ORD. N°", "MAT"];
-doc.font("Open-Sans").fontSize(11);
+doc.font("Open-Sans").fontSize(12);
 texts.forEach((text) => {
-    let textWidth = doc.widthOfString(text);
+    textWidth = doc.widthOfString(text);
     doc.text(text, margin + colWidth * 7, doc.y, { paragraphGap: 0, lineGap: 0 });
-    // Dibujar la línea justo después del texto
     doc
         .moveTo(doc.x + textWidth, doc.y)
         .lineTo(pageWidth - margin, doc.y)
         .strokeColor("black")
         .stroke();
 });
-//doc.save();
-//doc.moveDown(1);
-// Seccion Dos: Titulo
-doc.moveDown(1); // Añadir espacio entre filas
-const title = "Santiago, xx de xxxxx de xxxx";
-const titleWidth = doc.widthOfString(title);
-const titleX = (pageWidth - titleWidth) / 2;
-doc.text(title, margin, doc.y, {
-    paragraphGap: 10,
-});
+// Fecha
+const fecha = Fechas_1.Fechas.obtenerFechaActualEnEspanol("DD de MMMM de YYYY");
 doc.moveDown(1);
-let posy = doc.y;
-doc.text("De:", margin, posy);
-doc.text("REGISTRADOR CURRICULAR", colWidth + margin, posy);
-doc.text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA", colWidth + margin, doc.y);
-doc.text("A:", margin, doc.y, { continued: true });
-doc.text("JEFA DE UNIDAD DE TITULOS Y GRADOS", colWidth + margin);
+doc.font("Open-Sans-Bold");
+doc.text("Santiago, " + fecha, margin, doc.y);
+doc.moveDown(1);
+let posY = doc.y;
+doc.text("De:", margin, posY);
+doc.text("REGISTRADOR CURRICULAR", colWidth + margin, posY);
+doc.text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA", colWidth + margin);
+doc.moveDown(1);
+posY = doc.y;
+doc.text("A:", margin, posY);
+doc.text("JEFA DE UNIDAD DE TITULOS Y GRADOS", colWidth + margin, posY);
 doc.text("UNIVERSIDAD DE SANTIAGO DE CHILE", colWidth + margin);
-// Seccion Dos: Cuadro
-const boxHeight = 113.39; // 4 cm en puntos
+doc.moveDown(2);
+doc.font("Open-Sans");
+doc.text("Remito a usted Expediente de Título, Carta de Solicitud al Sr. Rector del egresado de esta Facultad que solicita le conceda el Título que se indica a continuación:", margin);
+doc.moveDown(2);
+posY = doc.y;
+doc.text("NOMBRE:", margin, posY);
+doc.font("Open-Sans-Bold");
+doc.text("APELLIDO1 APELLIDO2, NOMBRES", margin + colWidth * 2, posY);
+doc.moveDown(1);
+posY = doc.y;
+doc.font("Open-Sans");
+doc.text("CARRERA:", margin, posY);
+doc.font("Open-Sans-Bold");
+doc.text("NOMBRE DEL MINOR", margin + colWidth * 2, posY);
+doc.moveDown(1);
+posY = doc.y;
+doc.font("Open-Sans");
+doc.text("FECHA:", margin, posY);
+doc.font("Open-Sans-Bold");
+doc.text("xx de xxxxx de xxxxx", margin + colWidth * 2, posY);
+doc.moveDown(2);
+doc.font("Open-Sans");
+doc.text("Saludo atentamente a Ud.,", margin, doc.y);
+doc.moveDown(3);
+text = "IVÁN JORQUERA HIDALGO";
+textWidth = doc.widthOfString(text);
+doc.text(text, margin + colWidth * 8, doc.y, {
+    width: colWidth * 4,
+    align: "center",
+});
 doc
-    .rect(margin + colWidth * 7, doc.y, colWidth * 5, boxHeight)
+    .moveTo(margin + colWidth * 8 + (colWidth * 4 - textWidth) / 2, doc.y)
+    .lineTo(pageWidth - margin - (colWidth * 4 - textWidth) / 2, doc.y)
     .strokeColor("black")
     .stroke();
-const box1Start = doc.y + boxHeight;
-doc
-    .font("Open-Sans-Bold")
-    .fontSize(13)
-    .text("APELLIDO1 APELLIDO2, NOMBRES", margin, doc.y + boxHeight + margin, {
-    paragraphGap: 0,
+doc.fontSize(10).text("REGISTRADOR CURRICULAR", margin + colWidth * 8, doc.y, {
+    width: colWidth * 4,
     align: "center",
 });
-// linea bajo el nombre
-doc
-    .moveTo(margin * 1.5, doc.y)
-    .lineTo(pageWidth - margin * 1.5, doc.y)
-    .stroke();
-doc
-    .font("Open-Sans")
-    .fontSize(11)
-    .text("Apellidos y Nombres Completos", margin, doc.y, {
-    paragraphGap: 5,
-    align: "center",
-});
-doc
-    .font("Open-Sans")
-    .fontSize(13)
-    .text("Dirección de la casa, número y villa", margin, doc.y, {
-    paragraphGap: 0,
-    align: "center",
-});
-// linea bajo dirección
-doc
-    .moveTo(margin * 1.5, doc.y)
-    .lineTo(pageWidth - margin * 1.5, doc.y)
-    .stroke();
-doc.font("Open-Sans").fontSize(11).text("Domicilio", margin, doc.y, {
-    paragraphGap: 5,
-    align: "center",
-});
+doc.moveDown(2);
+doc.font("Open-Sans");
+doc.fontSize(12).text("Distribución:", margin, doc.y);
+doc.moveDown(1);
+doc.text("1. Títulos y Grados");
+doc.text("2. Registro Curricular");
+//doc.text("A:", margin, doc.y  ,{ continued: true });
 doc.end();
+// doc.text("A:", margin, posY, { continued: true });
+// doc.save();
+// doc.moveDown(1);
