@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import * as fs from "fs";
 import { Fechas } from "./Fechas";
+import { width } from "pdfkit/js/page";
 
 //import { width } from "pdfkit/js/page";
 
@@ -15,7 +16,7 @@ const doc = new PDFDocument({
   },
 });
 
-doc.pipe(fs.createWriteStream("./public/doc-ordinario-v2.pdf"));
+doc.pipe(fs.createWriteStream("doc-i2.pdf"));
 
 doc.registerFont("Open-Sans-Bold", "src/fonts/OpenSans-SemiBold.ttf");
 doc.registerFont(
@@ -76,36 +77,44 @@ texts.forEach((text) => {
   });
 });
 
-texts = ["ORD. N°", "MAT"];
 doc.font("Open-Sans").fontSize(12);
 
-texts.forEach((text) => {
-  textWidth = doc.widthOfString(text);
-  doc.text(text, margin + colWidth * 7, doc.y, { paragraphGap: 0, lineGap: 0 });
+
+
+  doc.text("N° xxxxxx", margin + colWidth * 11, doc.y, { paragraphGap: 0, lineGap: 0 });
   doc
-    .moveTo(doc.x + textWidth, doc.y)
-    .lineTo(pageWidth - margin, doc.y)
-    .strokeColor("black")
-    .stroke();
+
+doc.moveDown(1); // Añadir espacio entre filas
+const title = "INFORME DE CALIFICACIONES";
+let titleWidth = doc.widthOfString(title);
+const titleX = (pageWidth - titleWidth) / 2;
+doc.font("Open-Sans-Bold").fontSize(15).text(title, margin, doc.y, {
+  paragraphGap: 10,
+  align: "center",
 });
 
 // Fecha
-const fecha = Fechas.obtenerFechaActualEnEspanol("DD de MMMM de YYYY");
-doc.moveDown(1);
-doc.font("Open-Sans-Bold");
-doc.text("Santiago, " + fecha, margin, doc.y);
-doc.moveDown(1);
 
 let posY = doc.y;
-doc.text("De:", margin, posY);
-doc.text("REGISTRADOR CURRICULAR", colWidth + margin, posY);
-doc.text("FACULTAD DE ADMINISTRACIÓN Y ECONOMÍA", colWidth + margin);
+doc.font("Open-Sans").fontSize(10);
+//text="Céd. Identidad:";
+//textWidth = doc.widthOfString(title);
+doc.text("Céd. Identidad:", margin, posY);
+doc.text("12121212-1", margin + colWidth*2, posY );
+doc.text("Nombre:", margin + colWidth*4, posY);
+doc.text("JUANIN JUAN JARRI 31 MINUTOS", margin + colWidth *6, posY);
 doc.moveDown(1);
-
+doc.text("NOMBRE DEL PROGRAMA QUE ESTUDIA JUANIN", margin);
+doc.moveDown(1);
 posY = doc.y;
-doc.text("A:", margin, posY);
-doc.text("JEFA DE UNIDAD DE TITULOS Y GRADOS", colWidth + margin, posY);
-doc.text("UNIVERSIDAD DE SANTIAGO DE CHILE", colWidth + margin);
+doc.text("Fecha de Ingreso:", margin, posY);
+doc.text("xxxx xxxxx xx 9999", margin + colWidth*2, posY );
+
+doc.moveDown(1);
+posY = doc.y;
+doc.text("Plan de Estudios:", margin, posY);
+doc.text("resolucion x", margin + colWidth *2, posY);
+doc.text("n° equis", margin + colWidth *4, posY);
 doc.moveDown(2);
 
 doc.font("Open-Sans");
@@ -134,8 +143,23 @@ doc.font("Open-Sans-Bold");
 doc.text("xx de xxxxx de xxxxx", margin + colWidth * 2, posY);
 doc.moveDown(2);
 
+doc
+.moveTo(margin, doc.y)
+.lineTo(pageWidth - margin, doc.y)
+.strokeColor("black")
+.stroke();
+
+doc.font("Open-Sans-Condensed");
+doc.fontSize(6).text("Notas: 0 a 100, nota mínima 50 (hasta 2/90) y 1 a 7, nota mínima 4 (desde 1/91); Idioma: A=Aprobado con Distinción, B=Suficiente; Culturales y Coprogramáticos: AD=Aprobado con Distinción, A=Aprobado; CONV=Convalidado", margin, doc.y, {width: pageWidth - margin * 2, align: "center",});
+
+const fecha = Fechas.obtenerFechaActualEnEspanol("DD de MMMM de YYYY");
+doc.moveDown(1);
+doc.fontSize(12);
+doc.font("Open-Sans-Bold");
+doc.text("Santiago, " + fecha, margin, doc.y);
+doc.moveDown(1);
+
 doc.font("Open-Sans");
-doc.text("Saludo atentamente a Ud.,", margin, doc.y);
 doc.moveDown(3);
 text = "IVÁN JORQUERA HIDALGO";
 textWidth = doc.widthOfString(text);
@@ -156,14 +180,6 @@ doc.moveDown(2);
 
 doc.font("Open-Sans");
 doc.fontSize(12).text("Distribución:", margin, doc.y);
-doc.moveDown(1);
-doc.text("1. Títulos y Grados");
-doc.text("2. Registro Curricular");
 
-//doc.text("A:", margin, doc.y  ,{ continued: true });
 
 doc.end();
-
-// doc.text("A:", margin, posY, { continued: true });
-// doc.save();
-// doc.moveDown(1);
